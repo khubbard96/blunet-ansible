@@ -1,0 +1,8 @@
+- name: Test
+  hosts: compute
+  remote_user: root
+
+  tasks:
+  - name: Test
+    ansible.builtin.shell:
+      cmd: ls /
