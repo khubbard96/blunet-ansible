@@ -1,8 +1,12 @@
-- name: Test
-  hosts: compute
+- name: Docker activity
+  hosts: manager
   remote_user: root
 
   tasks:
-  - name: Test
+  - name: Stop stack
     ansible.builtin.shell:
-      cmd: ls /
+      cmd: docker stack rm blunet-minecraft-vanilla
+      
+  - name: Start stack
+    ansible.builtin.shell:
+      cmd: docker stack deploy --compose-file /opt/blunet-minecraft/blunet-minecraft.docker-compose.yml blunet-minecraft-vanilla
