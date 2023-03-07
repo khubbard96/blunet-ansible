@@ -6,18 +6,20 @@
   tasks:
     - name: Check for compute node context
       ansible.builtin.shell:
-        cmd: if [[ -z $(docker context ls | awk '{print $1}' | grep "lovelace") ]]; then echo true; fi
+        cmd: if [[ -z $(docker context ls | awk '{print $1}' | grep "lovelace") ]]; then echo true; elif echo false; fi
       register: context_missing
 
     - name: Create missing docker context
-      command: docker context create lovelace --description "lovelace" --docker "host=ssh://lovelace"
+      ansible.builtin.shell:
+        cmd: docker context create lovelace --description "lovelace" --docker "host=ssh://lovelace"
       when: context_missing == "true"
     
     - name: Use new context
       command: docker context use lovelace
 
     - name: Find minecraft image name
-      command:  docker ps --format "{{.Names}}" | grep "blunet-minecraft-vanilla_minecraft-spigot-vanilla"
+      ansible.builtin.shell:
+        cmd: docker ps --format "{{.Names}}" | grep "blunet-minecraft-vanilla_minecraft-spigot-vanilla"
       register: minecraft_image_name
 
     - name: Execute backup command on container
@@ -26,7 +28,8 @@
         command: mc_send backup take everything
 
     - name: Find s3 image name
-      command:  docker ps --format "{{.Names}}" | grep "blunet-minecraft-vanilla_world-backup"
+      ansible.builtin.shell:
+        cmd: docker ps --format "{{.Names}}" | grep "blunet-minecraft-vanilla_world-backup"
       register: s3_image_name
 
     - name: Execute backup command on container
@@ -35,5 +38,6 @@
         command: ./backup-and-cleanup.sh
 
     - name: Return to default context
-      command: docker context use default
+      ansible.builtin.shell:
+        cmd: docker context use default
 
