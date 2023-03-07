@@ -1,0 +1,38 @@
+---
+- name: Create backup for blunet-minecraft-vanilla
+  hosts: compute
+  remote_user: kevin
+
+  tasks:
+    - name: Check for compute node context
+      command:  if [[ -z $(docker context ls | awk '{print $1}' | grep "lovelace") ]]; then echo true; fi
+      register: context_missing
+
+    - name: Create missing docker context
+      command: docker context create lovelace --description "lovelace" --docker "host=ssh://lovelace"
+      when: context_missing == "true"
+    
+    - name: Use new context
+      command: docker context use lovelace
+
+    - name: Find minecraft image name
+      command:  docker ps --format "{{.Names}}" | grep "blunet-minecraft-vanilla_minecraft-spigot-vanilla"
+      register: minecraft_image_name
+
+    - name: Execute backup command on container
+      community.docker.docker_container_exec:
+        container: "{{ minecraft_image_name }}"
+        command: mc_send backup take everything
+
+    - name: Find s3 image name
+      command:  docker ps --format "{{.Names}}" | grep "blunet-minecraft-vanilla_world-backup"
+      register: s3_image_name
+
+    - name: Execute backup command on container
+      community.docker.docker_container_exec:
+        container: "{{ s3_image_name }}"
+        command: ./backup-and-cleanup.sh
+
+    - name: Return to default context
+      command: docker context use default
+
