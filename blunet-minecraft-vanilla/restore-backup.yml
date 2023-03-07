@@ -1,11 +1,16 @@
 ---
-- name: Create backup for blunet-minecraft-vanilla
+- name: Restore backup for blunet-minecraft-vanilla
   hosts: manager
   remote_user: pi
   vars:
     compute_context_name: lovelace
+    minecraft_service_name: blunet-minecraft-vanilla_minecraft-spigot-vanilla
     minecraft_container_search_name: blunet-minecraft-vanilla_minecraft-spigot-vanilla
     s3_container_search_name: blunet-minecraft-vanilla_world-backup
+    minecraft_container_volume_name: blunet-minecraft-vanilla_minecraft
+  vars_prompt:
+    - name: backup_name
+      prompt: Backup name to restore
 
   tasks:
     - name: Check for compute node context
@@ -17,22 +22,13 @@
       ansible.builtin.shell:
         cmd: docker context create {{ compute_context_name }} --description "{{ compute_context_name }}" --docker "host=ssh://kevin@{{ compute_context_name }}"
       when: context_missing == "true"
+
+    - name: Scale down minecraft service
+      ansible.builtin.shell:
+        cmd: docker service scale {{ minecraft_service_name }}=0
     
     - name: Use new context
       command: docker context use {{ compute_context_name }}
-
-    - name: Find minecraft image name
-      ansible.builtin.shell:
-        cmd: docker ps --format json | jq -r ".Names" | grep "{{ minecraft_container_search_name }}"
-      register: minecraft_image_name
-
-    - name: Execute backup command on container
-      ansible.builtin.shell:
-        cmd: docker exec "{{minecraft_image_name.stdout}}" mc_send backup take everything
-        
-    - name: Pause for 30 seconds for backup to complete
-      ansible.builtin.pause:
-        seconds: 30
 
     - name: Find s3 image name
       ansible.builtin.shell:
@@ -41,9 +37,12 @@
 
     - name: Execute backup command on container
       ansible.builtin.shell:
-        cmd: docker exec "{{s3_image_name.stdout}}" ./backup-and-cleanup.sh
+        cmd: docker exec "{{s3_image_name.stdout}}" ./restore-backup.sh {{ backup_name }}
 
     - name: Return to default context
       ansible.builtin.shell:
         cmd: docker context use default
 
+    - name: Scale up minecraft service
+      ansible.builtin.shell:
+        cmd: docker service scale {{ minecraft_service_name }}=1
