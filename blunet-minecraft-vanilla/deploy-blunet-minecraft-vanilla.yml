@@ -4,15 +4,58 @@
   remote_user: pi
 
   tasks:
-    - name: Deploy blunet-minecraft-vanilla
+    - name: Deploy Minecraft (vanilla) to BluNet
       community.docker.docker_stack:
         state: present
-        name: blunet-minecraft-vanilla
+        name: "{{ deployment.name }}"
         compose:
-          - /opt/blunet-minecraft/blunet-minecraft.docker-compose.yml
+          - version: "3.9"
+            services:
+              world-backup:
+                image: "{{ deployment.services.world-backup.image }}"
+                environment:
+                  - AWS_ACCESS_KEY_ID={{ aws_access_key_id }}
+                  - AWS_SECRET_ACCESS_KEY={{ aws_secret_access_key }}
+                  - AWS_DEFAULT_REGION={{ aws_default_region }}
+                  - S3_BUCKET_URL={{ minecraft_s3_bucket_url }}
+                  - BACKUP_SOURCE_DIR=/mc-data/backups
+                  - BACKUP_TARGET_DIR=/mc-data
+                  - FILE_EXTENSION=zip
+                  - CRON_SCHEDULE=0 6 * * *
+                  - CLEAR_BACKUPS=true
+                  - WEBHOOK={{ minecraft_backup_notify_webhook }}
+                  - NUM_MOST_RECENT_FILES=3
+                volumes:
+                  - minecraft:/mc-data
+                deploy:
+                  placement:
+                    constraints:
+                      - node.hostname == {{ deployment.node }}
+              minecraft-spigot-vanilla:
+                image: "{{ deployment.services.minecraft-spigot-vanilla.image }}"
+                environment:
+                  - EULA=true
+                  - MC_MAXMEM=32G
+                  - MC_MINMEM=28G
+                volumes:
+                  - minecraft:/minecraft
+                ports:
+                  - "25565:25565"
+                healthcheck:
+                  test: ps aux | grep "/minecraft/spigot.jar nogui$" || exit 1
+                  interval: 1m
+                  timeout: 20s
+                  retries: 3
+                  start_period: 7m30s
+                deploy:
+                  placement:
+                    constraints:
+                      - node.hostname == {{ deployment.node }}
+            volumes:
+              minecraft:
     - name: Notify discord of service being up
       uri: 
-         url: "{{ blunet_notify_minecraft }}"
+         url: "{{ blunet_service_notify_minecraft }}"
          method: POST
          body: "{\"content\": \"blunet-minecraft-vanilla service is UP.\"}"
          body_format: json

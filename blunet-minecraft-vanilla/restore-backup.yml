@@ -2,12 +2,6 @@
 - name: Restore backup for blunet-minecraft-vanilla
   hosts: manager
   remote_user: pi
-  vars:
-    compute_context_name: lovelace
-    minecraft_service_name: blunet-minecraft-vanilla_minecraft-spigot-vanilla
-    minecraft_container_search_name: blunet-minecraft-vanilla_minecraft-spigot-vanilla
-    s3_container_search_name: blunet-minecraft-vanilla_world-backup
-    minecraft_container_volume_name: blunet-minecraft-vanilla_minecraft
 
   tasks:
     - name: Check for backup timestamp specified
@@ -16,24 +10,24 @@
 
     - name: Check for compute node context
       ansible.builtin.shell:
-        cmd: if [[ -z $(docker context ls | awk '{print $1}' | grep "{{ compute_context_name }}") ]]; then echo true; else echo false; fi
+        cmd: if [[ -z $(docker context ls | awk '{print $1}' | grep "{{ deployment.node }}") ]]; then echo true; else echo false; fi
       register: context_missing
 
     - name: Create missing docker context
       ansible.builtin.shell:
-        cmd: docker context create {{ compute_context_name }} --description "{{ compute_context_name }}" --docker "host=ssh://kevin@{{ compute_context_name }}"
+        cmd: docker context create {{ deployment.node }} --description "{{ deployment.node }}" --docker "host=ssh://kevin@{{ deployment.node }}"
       when: context_missing == "true"
 
     - name: Scale down minecraft service
       ansible.builtin.shell:
-        cmd: docker service scale {{ minecraft_service_name }}=0
+        cmd: docker service scale {{ deployment.name }}_minecraft-spigot-vanilla=0
     
     - name: Use new context
-      command: docker context use {{ compute_context_name }}
+      command: docker context use {{ deployment.node }}
 
     - name: Find s3 image name
       ansible.builtin.shell:
-        cmd: docker ps --format json | jq -r ".Names" | grep "{{ s3_container_search_name }}"
+        cmd: docker ps --format json | jq -r ".Names" | grep "{{ deployment.name }}_world-backup"
       register: s3_image_name
 
     - name: Verify all backups present
@@ -41,22 +35,22 @@
         cmd: docker exec "{{s3_image_name.stdout}}" ./verify-present-on-s3.sh backup__{{ backup_timestamp }}__overworld.zip backup__{{ backup_timestamp }}__nether.zip backup__{{ backup_timestamp }}__end.zip
       register: files_present
       failed_when: files_present.rc == 1
-      when: synced_restore == true
+      when: restore.synced == true
 
     - name: Restore backup - overworld
       ansible.builtin.shell:
         cmd: docker exec "{{s3_image_name.stdout}}" ./restore-backup.sh backup__{{ backup_timestamp }}__overworld.zip
-      when: restore_overworld == true
+      when: restore.restore_overworld == true
 
     - name: Restore backup - nether
       ansible.builtin.shell:
         cmd: docker exec "{{s3_image_name.stdout}}" ./restore-backup.sh backup__{{ backup_timestamp }}__nether.zip  
-      when: restore_nether == true
+      when: restore.restore_nether == true
 
     - name: Restore backup - end
       ansible.builtin.shell:
         cmd: docker exec "{{s3_image_name.stdout}}" ./restore-backup.sh backup__{{ backup_timestamp }}__end.zip
-      when: restore_end == true
+      when: restore.restore_end == true
 
     - name: Return to default context
       ansible.builtin.shell:
@@ -64,4 +58,4 @@
 
     - name: Scale up minecraft service
       ansible.builtin.shell:
-        cmd: docker service scale {{ minecraft_service_name }}=1
+        cmd: docker service scale {{ deployment.name }}_minecraft-spigot-vanilla=1

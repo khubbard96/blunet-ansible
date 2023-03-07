@@ -4,13 +4,13 @@
   remote_user: pi
   
   tasks:
-     - name: Withdraw blunet-minecraft-vanilla deployment
+     - name: Withdraw Minecraft (vanilla) from BluNett
        community.docker.docker_stack:
-         name: blunet-minecraft-vanilla
+         name:  "{{ deployment.name }}"
          state: absent
      - name: Notify discord of service being down
        uri: 
-         url: "{{ blunet_notify_minecraft }}"
+         url: "{{ blunet_service_notify_minecraft }}"
          method: POST
          body: "{\"content\": \"blunet-minecraft-vanilla service is DOWN.\"}"
          body_format: json

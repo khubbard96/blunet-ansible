@@ -2,28 +2,24 @@
 - name: Create backup for blunet-minecraft-vanilla
   hosts: manager
   remote_user: pi
-  vars:
-    compute_context_name: lovelace
-    minecraft_container_search_name: blunet-minecraft-vanilla_minecraft-spigot-vanilla
-    s3_container_search_name: blunet-minecraft-vanilla_world-backup
 
   tasks:
     - name: Check for compute node context
       ansible.builtin.shell:
-        cmd: if [[ -z $(docker context ls | awk '{print $1}' | grep "{{ compute_context_name }}") ]]; then echo true; else echo false; fi
+        cmd: if [[ -z $(docker context ls | awk '{print $1}' | grep "{{ deployment.node }}") ]]; then echo true; else echo false; fi
       register: context_missing
 
     - name: Create missing docker context
       ansible.builtin.shell:
-        cmd: docker context create {{ compute_context_name }} --description "{{ compute_context_name }}" --docker "host=ssh://kevin@{{ compute_context_name }}"
+        cmd: docker context create {{ deployment.node }} --description "{{ deployment.node }}" --docker "host=ssh://kevin@{{ deployment.node }}"
       when: context_missing == "true"
     
     - name: Use new context
-      command: docker context use {{ compute_context_name }}
+      command: docker context use {{ deployment.node }}
 
     - name: Find minecraft image name
       ansible.builtin.shell:
-        cmd: docker ps --format json | jq -r ".Names" | grep "{{ minecraft_container_search_name }}"
+        cmd: docker ps --format json | jq -r ".Names" | grep "{{ deployment.name }}_minecraft-spigot-vanilla"
       register: minecraft_image_name
 
     - name: Execute backup command on container
@@ -36,7 +32,7 @@
 
     - name: Find s3 image name
       ansible.builtin.shell:
-        cmd: docker ps --format json | jq -r ".Names" | grep "{{ s3_container_search_name }}"
+        cmd: docker ps --format json | jq -r ".Names" | grep "{{ deployment.name }}_world-backup"
       register: s3_image_name
 
     - name: Execute backup command on container
