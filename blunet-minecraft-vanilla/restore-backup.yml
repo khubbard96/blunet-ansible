@@ -8,11 +8,12 @@
     minecraft_container_search_name: blunet-minecraft-vanilla_minecraft-spigot-vanilla
     s3_container_search_name: blunet-minecraft-vanilla_world-backup
     minecraft_container_volume_name: blunet-minecraft-vanilla_minecraft
-  vars_prompt:
-    - name: backup_name
-      prompt: Backup name to restore
 
   tasks:
+    - name: Check for backup name
+      meta: end_play
+      when: backup_name is not defined
+      
     - name: Check for compute node context
       ansible.builtin.shell:
         cmd: if [[ -z $(docker context ls | awk '{print $1}' | grep "{{ compute_context_name }}") ]]; then echo true; else echo false; fi
