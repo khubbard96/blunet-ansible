@@ -9,5 +9,11 @@
          name: blunet-minecraft-vanilla
          state: absent
      - name: Notify discord of service being down
-       ansible.builtin.shell:
-         cmd: curl -i -s -m 10 --retry 5 -H "Accept: application/json" -H "Content-Type:application/json" -X POST --data "{\"content\": \"blunet-minecraft-vanilla service is DOWN.\"}" "https://discord.com/api/webhooks/1082575706032185444/PhqrjPKbfK1onY0BNN-z1lLwvZn5pdtN8sY7zyFQS-YkjIx5S8SfsJ8MCNdJ6pwbXZsi"
+       uri: 
+         url: https://discord.com/api/webhooks/1082575706032185444/PhqrjPKbfK1onY0BNN-z1lLwvZn5pdtN8sY7zyFQS-YkjIx5S8SfsJ8MCNdJ6pwbXZsi
+         method: POST
+         body: "{\"content\": \"blunet-minecraft-vanilla service is DOWN.\"}"
+         body_format: json
+         headers:
+           Content-Type: "application/json"
+           Accept: "application/json"
