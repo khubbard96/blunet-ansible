@@ -23,9 +23,8 @@
       register: minecraft_image_name
 
     - name: Execute backup command on container
-      community.docker.docker_container_exec:
-        container: "{{ minecraft_image_name }}"
-        command: mc_send backup take everything
+      ansible.builtin.shell:
+        cmd: docker exec "{{minecraft_image_name}}" mc_send backup take everything
 
     - name: Find s3 image name
       ansible.builtin.shell:
@@ -33,9 +32,8 @@
       register: s3_image_name
 
     - name: Execute backup command on container
-      community.docker.docker_container_exec:
-        container: "{{ s3_image_name }}"
-        command: ./backup-and-cleanup.sh
+      ansible.builtin.shell:
+        cmd: docker exec "{{s3_image_name}}" ./backup-and-cleanup.sh
 
     - name: Return to default context
       ansible.builtin.shell:
