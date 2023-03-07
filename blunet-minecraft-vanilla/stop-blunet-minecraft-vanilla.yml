@@ -14,6 +14,7 @@
          method: POST
          body: "{\"content\": \"blunet-minecraft-vanilla service is DOWN.\"}"
          body_format: json
+         status_code: [200, 202, 204]
          headers:
            Content-Type: "application/json"
            Accept: "application/json"
