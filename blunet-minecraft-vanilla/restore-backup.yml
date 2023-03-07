@@ -8,10 +8,6 @@
     minecraft_container_search_name: blunet-minecraft-vanilla_minecraft-spigot-vanilla
     s3_container_search_name: blunet-minecraft-vanilla_world-backup
     minecraft_container_volume_name: blunet-minecraft-vanilla_minecraft
-    synced_restore: true
-    restore_overworld: true
-    restore_nether: true
-    restore_end: true
 
   tasks:
     - name: Check for backup timestamp specified
@@ -44,22 +40,22 @@
       shell: ./verify-present-on-s3.sh
       register: files_present
       failed_when: files_present.rc == 1
-      when: synced_restore == "true"
+      when: synced_restore == true
 
     - name: Restore backup - overworld
       ansible.builtin.shell:
         cmd: docker exec "{{s3_image_name.stdout}}" ./restore-backup.sh backup__{{ backup_timestamp }}__overworld.zip
-      when: restore_overworld == "true"
+      when: restore_overworld == true
 
     - name: Restore backup - nether
       ansible.builtin.shell:
         cmd: docker exec "{{s3_image_name.stdout}}" ./restore-backup.sh backup__{{ backup_timestamp }}__nether.zip  
-      when: restore_nether == "true"
+      when: restore_nether == true
 
     - name: Restore backup - end
       ansible.builtin.shell:
         cmd: docker exec "{{s3_image_name.stdout}}" ./restore-backup.sh backup__{{ backup_timestamp }}__end.zip
-      when: restore_end == "true"
+      when: restore_end == true
 
     - name: Return to default context
       ansible.builtin.shell:
