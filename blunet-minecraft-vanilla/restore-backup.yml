@@ -37,7 +37,8 @@
       register: s3_image_name
 
     - name: Verify all backups present
-      shell: ./verify-present-on-s3.sh
+      shell: 
+        cmd: docker exec "{{s3_image_name.stdout}}" ./verify-present-on-s3.sh backup__{{ backup_timestamp }}__overworld.zip backup__{{ backup_timestamp }}__nether.zip backup__{{ backup_timestamp }}__end.zip
       register: files_present
       failed_when: files_present.rc == 1
       when: synced_restore == true
