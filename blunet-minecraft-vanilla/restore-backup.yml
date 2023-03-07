@@ -20,14 +20,14 @@
 
     - name: Scale down minecraft service
       ansible.builtin.shell:
-        cmd: docker service scale {{ deployment.name }}_minecraft-spigot-vanilla=0
+        cmd: docker service scale {{ deployment.name }}_minecraft_spigot_vanilla=0
     
     - name: Use new context
       command: docker context use {{ deployment.node }}
 
     - name: Find s3 image name
       ansible.builtin.shell:
-        cmd: docker ps --format json | jq -r ".Names" | grep "{{ deployment.name }}_world-backup"
+        cmd: docker ps --format json | jq -r ".Names" | grep "{{ deployment.name }}_world_backup"
       register: s3_image_name
 
     - name: Verify all backups present
@@ -58,4 +58,4 @@
 
     - name: Scale up minecraft service
       ansible.builtin.shell:
-        cmd: docker service scale {{ deployment.name }}_minecraft-spigot-vanilla=1
+        cmd: docker service scale {{ deployment.name }}_minecraft_spigot_vanilla=1

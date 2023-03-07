@@ -11,13 +11,13 @@
         compose:
           - version: "3.9"
             services:
-              world-backup:
+              world_backup:
                 image: '{{ deployment.services.world_backup.image }}'
                 environment:
-                  - AWS_ACCESS_KEY_ID={{ aws_access_key_id }}
-                  - AWS_SECRET_ACCESS_KEY={{ aws_secret_access_key }}
-                  - AWS_DEFAULT_REGION={{ aws_default_region }}
-                  - S3_BUCKET_URL={{ minecraft_s3_bucket_url }}
+                  - AWS_ACCESS_KEY_ID={{ aws.aws_access_key_id }}
+                  - AWS_SECRET_ACCESS_KEY={{ aws.aws_secret_access_key }}
+                  - AWS_DEFAULT_REGION={{ aws.aws_default_region }}
+                  - S3_BUCKET_URL={{ aws.s3_bucket_url }}
                   - BACKUP_SOURCE_DIR=/mc-data/backups
                   - BACKUP_TARGET_DIR=/mc-data
                   - FILE_EXTENSION=zip
@@ -31,8 +31,8 @@
                   placement:
                     constraints:
                       - node.hostname == {{ deployment.node }}
-              minecraft-spigot-vanilla:
-                image: '{{ deployment.services.minecraft-spigot-vanilla.image }}'
+              minecraft_spigot_vanilla:
+                image: '{{ deployment.services.minecraft_spigot_vanilla.image }}'
                 environment:
                   - EULA=true
                   - MC_MAXMEM=32G
