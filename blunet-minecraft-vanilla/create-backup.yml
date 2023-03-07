@@ -25,6 +25,10 @@
     - name: Execute backup command on container
       ansible.builtin.shell:
         cmd: docker exec "{{minecraft_image_name.stdout}}" mc_send backup take everything
+        
+    - name: Pause for 30 seconds for backup to complete
+      ansible.builtin.pause:
+        seconds: 30
 
     - name: Find s3 image name
       ansible.builtin.shell:
