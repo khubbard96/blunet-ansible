@@ -12,7 +12,7 @@
           - version: "3.9"
             services:
               world-backup:
-                image: '{{ deployment.services.world-backup.image }}'
+                image: '{{ deployment.services.world_backup.image }}'
                 environment:
                   - AWS_ACCESS_KEY_ID={{ aws_access_key_id }}
                   - AWS_SECRET_ACCESS_KEY={{ aws_secret_access_key }}
