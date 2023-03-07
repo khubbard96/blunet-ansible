@@ -10,7 +10,7 @@
          state: absent
      - name: Notify discord of service being down
        uri: 
-         url: {{ blunet_notify_minecraft }}
+         url: "{{ blunet_notify_minecraft }}"
          method: POST
          body: "{\"content\": \"blunet-minecraft-vanilla service is DOWN.\"}"
          body_format: json
