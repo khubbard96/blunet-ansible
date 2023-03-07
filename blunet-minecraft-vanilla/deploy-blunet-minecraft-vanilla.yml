@@ -1,8 +1,8 @@
 ---
 - name: Deploy blunet-minecraft-vanilla
-  hosts: neumann
+  hosts: manager
   remote_user: pi
-  
+
   tasks:
     - name: Deploy blunet-minecraft-vanilla
       community.docker.docker_stack:

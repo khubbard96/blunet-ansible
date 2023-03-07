@@ -1,6 +1,6 @@
 ---
 - name: Withdraw blunet-minecraft-vanilla
-  hosts: neumann
+  hosts: manager
   remote_user: pi
   
   tasks:
