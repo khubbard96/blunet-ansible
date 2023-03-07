@@ -42,7 +42,7 @@
                 ports:
                   - "25565:25565"
                 healthcheck:
-                  test: ps aux | grep "/minecraft/spigot.jar nogui$" || exit 1
+                  test: ps aux | grep "/minecraft/spigot.jar nogui$$" || exit 1
                   interval: 1m
                   timeout: 20s
                   retries: 3
