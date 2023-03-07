@@ -1,7 +1,7 @@
 ---
 - name: Create backup for blunet-minecraft-vanilla
-  hosts: compute
-  remote_user: kevin
+  hosts: manager
+  remote_user: pi
 
   tasks:
     - name: Check for compute node context
