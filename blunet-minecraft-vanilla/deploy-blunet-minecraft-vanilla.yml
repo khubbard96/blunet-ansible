@@ -12,7 +12,7 @@
           - version: "3.9"
             services:
               world-backup:
-                image: "{{ deployment.services.world-backup.image }}"
+                image: '{{ deployment.services.world-backup.image }}'
                 environment:
                   - AWS_ACCESS_KEY_ID={{ aws_access_key_id }}
                   - AWS_SECRET_ACCESS_KEY={{ aws_secret_access_key }}
@@ -32,7 +32,7 @@
                     constraints:
                       - node.hostname == {{ deployment.node }}
               minecraft-spigot-vanilla:
-                image: "{{ deployment.services.minecraft-spigot-vanilla.image }}"
+                image: '{{ deployment.services.minecraft-spigot-vanilla.image }}'
                 environment:
                   - EULA=true
                   - MC_MAXMEM=32G
