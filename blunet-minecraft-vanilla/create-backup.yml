@@ -11,7 +11,7 @@
 
     - name: Create missing docker context
       ansible.builtin.shell:
-        cmd: docker context create lovelace --description "lovelace" --docker "host=ssh://lovelace"
+        cmd: docker context create lovelace --description "lovelace" --docker "host=ssh://kevin@lovelace"
       when: context_missing == "true"
     
     - name: Use new context
