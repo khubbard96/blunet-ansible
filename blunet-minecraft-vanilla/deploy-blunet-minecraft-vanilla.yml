@@ -1,0 +1,12 @@
+---
+- name: Deploy blunet-minecraft-vanilla
+  hosts: neumann
+  remote_user: pi
+  
+  tasks:
+    - name: Deploy blunet-minecraft-vanilla
+      community.docker.docker_stack:
+        state: present
+        name: blunet-minecraft-vanilla
+        compose:
+          - /opt/blunet-minecraft/blunet-minecraft.docker-compose.yml

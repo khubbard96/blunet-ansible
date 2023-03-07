@@ -1,0 +1,10 @@
+---
+- name: Withdraw blunet-minecraft-vanilla
+  hosts: neumann
+  remote_user: pi
+  
+  tasks:
+     - name: Withdraw blunet-minecraft-vanilla deployment
+       community.docker.docker_stack:
+         name: blunet-minecraft-vanilla
+         state: absent
