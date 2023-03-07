@@ -12,7 +12,7 @@
           - /opt/blunet-minecraft/blunet-minecraft.docker-compose.yml
     - name: Notify discord of service being up
       uri: 
-         url: https://discord.com/api/webhooks/1082575706032185444/PhqrjPKbfK1onY0BNN-z1lLwvZn5pdtN8sY7zyFQS-YkjIx5S8SfsJ8MCNdJ6pwbXZsi
+         url: {{ blunet_notify_minecraft }}
          method: POST
          body: "{\"content\": \"blunet-minecraft-vanilla service is UP.\"}"
          body_format: json
