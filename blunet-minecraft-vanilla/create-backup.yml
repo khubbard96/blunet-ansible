@@ -19,7 +19,7 @@
 
     - name: Find minecraft image name
       ansible.builtin.shell:
-        cmd: docker ps --format '{{.Names}}' | grep "blunet-minecraft-vanilla_minecraft-spigot-vanilla"
+        cmd: docker ps --format json | jq -r ".Names" | grep "blunet-minecraft-vanilla_minecraft-spigot-vanilla"
       register: minecraft_image_name
 
     - name: Execute backup command on container
@@ -29,7 +29,7 @@
 
     - name: Find s3 image name
       ansible.builtin.shell:
-        cmd: docker ps --format '{{.Names}}' | grep "blunet-minecraft-vanilla_world-backup"
+        cmd: docker ps --format json | jq -r ".Names" | grep "blunet-minecraft-vanilla_world-backup"
       register: s3_image_name
 
     - name: Execute backup command on container
