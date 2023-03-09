@@ -7,11 +7,7 @@
     - name: Check for compute node context
       ansible.builtin.shell:
         cmd: if [[ -z $(docker context ls | awk '{print $1}' | grep "{{ deployment.node }}") ]]; then echo true; fi
-      register: context_missing
-
-    - name: Print return information from the previous task
-      ansible.builtin.debug:
-        var: context_missing.msg
+      register: context_missingdocker
 
     - name: Create missing docker context
       ansible.builtin.shell:
@@ -43,6 +39,22 @@
       ansible.builtin.shell:
         cmd: docker exec "{{s3_image_name.stdout}}" ./backup-and-cleanup.sh
 
+    - name: Stop minecraft server
+      ansible.builtin.shell:
+        cmd: docker exec "{{minecraft_image_name.stdout}}" mc_stop
+
+    - name: Execute delete world files on minecraft container
+      ansible.builtin.shell:
+        cmd: docker exec "{{minecraft_image_name.stdout}}" rm -rf /minecraft/world
+
+    - name: Execute delete world files on minecraft container
+      ansible.builtin.shell:
+        cmd: docker exec "{{minecraft_image_name.stdout}}" rm -rf /minecraft/world_nether
+
+    - name: Execute delete world files on minecraft container
+      ansible.builtin.shell:
+        cmd: docker exec "{{minecraft_image_name.stdout}}" rm -rf /minecraft/world_end
+
     - name: Return to default context
       ansible.builtin.shell:
         cmd: docker context use default
@@ -51,23 +63,9 @@
       ansible.builtin.shell:
         cmd: docker service scale {{ deployment.name }}_minecraft_spigot_vanilla=0
 
-    - name: Use new context
-      command: docker context use {{ deployment.node }}
-
-    - name: Execute delete world files on minecraft container
-      ansible.builtin.shell:
-        cmd: docker exec "{{minecraft_image_name.stdout}}" rm -rf /minecraft/world*
-      register: remove_world_result
-
-    - name: Remove world data error
-      ansible.builtin.debug:
-        var: remove_world_result.msg
-      when: remove_world_result.rc != 0
-    
-
-    - name: Return to default context
-      ansible.builtin.shell:
-        cmd: docker context use default
+    - name: Pause for 10 seconds for scaling to complete
+      ansible.builtin.pause:
+        seconds: 10
 
     - name: Scale up minecraft service
       ansible.builtin.shell:
