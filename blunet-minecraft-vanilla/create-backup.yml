@@ -6,13 +6,13 @@
   tasks:
     - name: Check for compute node context
       ansible.builtin.shell:
-        cmd: if [[ -z $(docker context ls | awk '{print $1}' | grep "{{ deployment.node }}") ]]; then echo true; else echo false; fi
+        cmd: if [[ -z $(docker context ls | awk '{print $1}' | grep "{{ deployment.node }}") ]]; then echo true; fi
       register: context_missing
 
     - name: Create missing docker context
       ansible.builtin.shell:
         cmd: docker context create {{ deployment.node }} --description "{{ deployment.node }}" --docker "host=ssh://kevin@{{ deployment.node }}"
-      when: context_missing == "true"
+      when: context_missing is defined
     
     - name: Use new context
       command: docker context use {{ deployment.node }}
