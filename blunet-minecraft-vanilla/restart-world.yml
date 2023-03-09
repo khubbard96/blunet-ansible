@@ -57,6 +57,13 @@
     - name: Execute delete world files on minecraft container
       ansible.builtin.shell:
         cmd: docker exec "{{minecraft_image_name.stdout}}" rm -rf /minecraft/world*
+      register: remove_world_result
+
+    - name: Remove world data error
+      ansible.builtin.debug:
+        var: remove_world_result.msg
+      when: remove_world_result.rc != 0
+    
 
     - name: Return to default context
       ansible.builtin.shell:
