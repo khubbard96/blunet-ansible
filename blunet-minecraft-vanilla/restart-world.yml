@@ -7,7 +7,7 @@
     - name: Check for compute node context
       ansible.builtin.shell:
         cmd: if [[ -z $(docker context ls | awk '{print $1}' | grep "{{ deployment.node }}") ]]; then echo true; fi
-      register: context_missingdocker
+      register: context_missing
 
     - name: Create missing docker context
       ansible.builtin.shell:
