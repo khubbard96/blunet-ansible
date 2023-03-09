@@ -9,6 +9,10 @@
         cmd: if [[ -z $(docker context ls | awk '{print $1}' | grep "{{ deployment.node }}") ]]; then echo true; fi
       register: context_missing
 
+    - name: Print return information from the previous task
+      ansible.builtin.debug:
+        var: context_missing
+
     - name: Create missing docker context
       ansible.builtin.shell:
         cmd: docker context create {{ deployment.node }} --description "{{ deployment.node }}" --docker "host=ssh://kevin@{{ deployment.node }}"
