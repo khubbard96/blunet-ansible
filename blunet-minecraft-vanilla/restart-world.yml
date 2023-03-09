@@ -11,12 +11,12 @@
 
     - name: Print return information from the previous task
       ansible.builtin.debug:
-        var: context_missing
+        var: context_missing.msg
 
     - name: Create missing docker context
       ansible.builtin.shell:
         cmd: docker context create {{ deployment.node }} --description "{{ deployment.node }}" --docker "host=ssh://kevin@{{ deployment.node }}"
-      when: context_missing.msg is defined
+      when: context_missing.msg != ""
 
     - name: Use new context
       command: docker context use {{ deployment.node }}
