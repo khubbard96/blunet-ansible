@@ -5,7 +5,7 @@ dependencies:
 tasks:
 - name: Container present
   community.docker.docker_container:
-    name: {{ service_name }}
+    name: blunet-minecraft-volume-interface
   register: container_data
 
 - name: Show container data
