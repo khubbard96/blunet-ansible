@@ -6,7 +6,7 @@
 
 - name: Print result
   debug:
-    msg: result
+    msg: {{ result }}
 
 - name: Exit if no docker
   meta: end_play
