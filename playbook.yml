@@ -7,4 +7,5 @@
 
   tasks:
   - name: asdfafsd
-    debug: "asdfafd"
+    debug: 
+      msg: "asdfafd"
