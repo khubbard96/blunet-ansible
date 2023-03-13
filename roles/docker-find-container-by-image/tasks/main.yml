@@ -6,6 +6,6 @@
 
 - name: Print information about containers
   ansible.builtin.debug:
-    msg: "{{ result.containers | map(attribute='Names') }}"
+    msg: "{{ result.containers | map(attribute='Names') | flatten }}"
   when: result is defined
 
