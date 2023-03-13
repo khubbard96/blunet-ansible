@@ -2,7 +2,7 @@
   hosts: worker
   remote_user: kevin
   roles:
-    - role: docker-find-container-by-image
+    - role: ../docker-find-container-by-image
       container_search_param: blunet-minecraft-volume-interface
 
   tasks:
