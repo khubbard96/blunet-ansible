@@ -9,7 +9,7 @@
   - name: Run restore script
     community.docker.docker_container_exec:
       container: "{{ container_name }}"
-      command: restore_backup
+      command: restore-backup
     register: result
 
   - name: Print stdout
