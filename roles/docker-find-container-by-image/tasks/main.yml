@@ -1,8 +1,4 @@
 ---
-dependencies:
-  - role: docker-verify
-
-tasks:
 - name: Container present
   community.docker.docker_container:
     name: blunet-minecraft-volume-interface
