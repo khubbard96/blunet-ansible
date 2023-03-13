@@ -1,7 +1,7 @@
 ---
 - name: Get infos on container
   community.docker.docker_container_info:
-    name: blunet-minecraft-volume-interface
+    name: dab389320d6a
   register: result
 
 - name: Does container exist?
