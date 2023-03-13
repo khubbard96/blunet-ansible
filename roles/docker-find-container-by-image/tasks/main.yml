@@ -4,8 +4,8 @@
     containers: true
   register: result
 
-- name: Print information about containers
+- name: Print container names
   ansible.builtin.debug:
-    msg: "{{ result.containers | map(attribute='Names') | flatten }}"
+    msg: "{{ result.containers | map(attribute='Names') | flatten | select('search','^blunet-minecraft-volume-interface') }}"
   when: result is defined
 
