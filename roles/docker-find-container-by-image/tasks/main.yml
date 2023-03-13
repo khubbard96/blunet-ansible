@@ -1,6 +1,6 @@
 ---
-- name: Container present
-  community.docker.docker_container:
+- name: Get infos on container
+  community.docker.docker_container_info:
     name: blunet-minecraft-volume-interface
-  register: container_data
+  register: result
 
