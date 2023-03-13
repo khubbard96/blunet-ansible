@@ -1,61 +1,17 @@
----
-- name: Restore backup for blunet-minecraft-vanilla
-  hosts: manager
-  remote_user: pi
+- name: Restore backup
+  hosts: worker
+  remote_user: kevin
+  roles:
+    - role: docker-find-container-by-image
+      container_search_param: blunet-minecraft-volume-interface
 
   tasks:
-    - name: Check for backup timestamp specified
-      meta: end_play
-      when: backup_timestamp is not defined
+  - name: Run restore script
+    community.docker.docker_container_exec:
+      container: "{{ container_name }}"
+      command: restore-backup
+    register: result
 
-    - name: Check for compute node context
-      ansible.builtin.shell:
-        cmd: if [[ -z $(docker context ls | awk '{print $1}' | grep "{{ deployment.node }}") ]]; then echo true; else echo false; fi
-      register: context_missing
-
-    - name: Create missing docker context
-      ansible.builtin.shell:
-        cmd: docker context create {{ deployment.node }} --description "{{ deployment.node }}" --docker "host=ssh://kevin@{{ deployment.node }}"
-      when: context_missing == "true"
-
-    - name: Scale down minecraft service
-      ansible.builtin.shell:
-        cmd: docker service scale {{ deployment.name }}_minecraft_spigot_vanilla=0
-    
-    - name: Use new context
-      command: docker context use {{ deployment.node }}
-
-    - name: Find s3 image name
-      ansible.builtin.shell:
-        cmd: docker ps --format json | jq -r ".Names" | grep "{{ deployment.name }}_world_backup"
-      register: s3_image_name
-
-    - name: Verify all backups present
-      shell: 
-        cmd: docker exec "{{s3_image_name.stdout}}" ./verify-present-on-s3.sh backup__{{ backup_timestamp }}__overworld.zip backup__{{ backup_timestamp }}__nether.zip backup__{{ backup_timestamp }}__end.zip
-      register: files_present
-      failed_when: files_present.rc == 1
-      when: restore.synced == true
-
-    - name: Restore backup - overworld
-      ansible.builtin.shell:
-        cmd: docker exec "{{s3_image_name.stdout}}" ./restore-backup.sh backup__{{ backup_timestamp }}__overworld.zip
-      when: restore.restore_overworld == true
-
-    - name: Restore backup - nether
-      ansible.builtin.shell:
-        cmd: docker exec "{{s3_image_name.stdout}}" ./restore-backup.sh backup__{{ backup_timestamp }}__nether.zip  
-      when: restore.restore_nether == true
-
-    - name: Restore backup - end
-      ansible.builtin.shell:
-        cmd: docker exec "{{s3_image_name.stdout}}" ./restore-backup.sh backup__{{ backup_timestamp }}__end.zip
-      when: restore.restore_end == true
-
-    - name: Return to default context
-      ansible.builtin.shell:
-        cmd: docker context use default
-
-    - name: Scale up minecraft service
-      ansible.builtin.shell:
-        cmd: docker service scale {{ deployment.name }}_minecraft_spigot_vanilla=1
+  - name: Print stdout
+    debug:
+      var: result.stdout

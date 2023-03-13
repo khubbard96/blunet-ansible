@@ -1,4 +1,4 @@
-- name: Restore backup
+- name: Destroy world
   hosts: worker
   remote_user: kevin
   roles:
@@ -9,7 +9,7 @@
   - name: Run restore script
     community.docker.docker_container_exec:
       container: "{{ container_name }}"
-      command: restore-backup
+      command: destroy-location
     register: result
 
   - name: Print stdout
