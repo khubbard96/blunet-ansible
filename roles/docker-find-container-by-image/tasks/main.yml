@@ -3,7 +3,4 @@
   community.docker.docker_container:
     name: blunet-minecraft-volume-interface
   register: container_data
-- name: Show container data
-  debug:
-    - container_data
 
