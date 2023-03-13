@@ -6,6 +6,6 @@
 
 - name: Print information about containers
   ansible.builtin.debug:
-    msg: "{{ (result.containers | selectattr('Names') | list) }}"
+    msg: "{{ (result.containers | selectattr('Names')) }}"
   when: result is defined
 
