@@ -1,0 +1,24 @@
+---
+- name: Verify arguments
+  assert:
+    that: 
+      - "{{ ahs_var }} is defined"
+      - "{{ ahs_var }} | length > 0"
+      - "{{ ahs_var }} != None"
+    fail_msg: "{{ ahs_var }} needs to be set for the role to work"
+    success_msg: "Required variable {{ ahs_var }} is defined"
+  loop_control:
+    loop_var: ahs_var
+  with_items:
+    - container_search_param
+
+- name: Get infos on container
+  community.docker.docker_host_info:
+    containers: true
+  register: result
+
+- name: Find full container name
+  set_fact:
+    container_name: "{{ result.containers | map(attribute='Names') | flatten | select('search', container_search_param) | first | replace('/', '') }}"
+  when: result is defined
+
