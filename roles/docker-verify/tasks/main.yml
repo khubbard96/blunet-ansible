@@ -10,4 +10,4 @@
 
 - name: Exit if no docker
   meta: end_play
-  when: result.can_talk_to_docker == false
+  when: result is not defined
