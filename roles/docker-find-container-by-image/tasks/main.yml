@@ -1,7 +1,7 @@
 ---
 - name: Get infos on container
-  community.docker.docker_container_info:
-    name: dab389320d6a
+  community.docker.docker_host_info:
+    containers: true
   register: result
 
 - name: Does container exist?
