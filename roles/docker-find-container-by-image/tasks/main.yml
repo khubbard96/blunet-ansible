@@ -1,11 +1,16 @@
 ---
+- name: Verify arguments
+  assert:
+    that:
+      - "{{ container_search_param }} is defined"
+
 - name: Get infos on container
   community.docker.docker_host_info:
     containers: true
   register: result
 
-- name: Print container names
-  ansible.builtin.debug:
-    msg: "{{ result.containers | map(attribute='Names') | flatten | select('search', container_search_param) | first | replace('/', '') }}"
+- name: Find full container name
+  set_fact:
+    container_name: "{{ result.containers | map(attribute='Names') | flatten | select('search', container_search_param) | first | replace('/', '') }}"
   when: result is defined
 

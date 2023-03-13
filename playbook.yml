@@ -9,4 +9,4 @@
   tasks:
   - name: asdfafsd
     debug: 
-      msg: "asdfafd"
+      var: container_name
