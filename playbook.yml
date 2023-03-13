@@ -1,12 +1,10 @@
 - name: Docker activity
-  hosts: manager
-  remote_user: root
+  hosts: worker
+  remote_user: kevin
+  roles:
+    - docker-find-container-by-image
+
 
   tasks:
-  - name: Stop stack
-    ansible.builtin.shell:
-      cmd: docker stack rm blunet-minecraft-vanilla
-      
-  - name: Start stack
-    ansible.builtin.shell:
-      cmd: docker stack deploy --compose-file /opt/blunet-minecraft/blunet-minecraft.docker-compose.yml blunet-minecraft-vanilla
+  - name: asdfafsd
+    debug: "asdfafd"
