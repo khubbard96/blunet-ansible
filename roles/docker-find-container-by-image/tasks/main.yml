@@ -1,0 +1,12 @@
+---
+dependencies:
+  - role: "/roles/docker-verify"
+
+- name: Container present
+  community.docker.docker_container:
+    name: {{ service_name }}
+  register: container_data
+
+- name: Show container data
+  debug:
+    - container_data

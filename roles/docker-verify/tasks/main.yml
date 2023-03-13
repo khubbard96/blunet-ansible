@@ -1,0 +1,9 @@
+---
+
+- name: Verify docker
+  community.docker.docker_host_info:
+  register: result
+
+- name: Exit if no docker
+  meta: end_play
+  when: result.can_talk_to_docker == false
