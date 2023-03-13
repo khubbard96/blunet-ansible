@@ -6,6 +6,6 @@
 
 - name: Print container names
   ansible.builtin.debug:
-    msg: "{{ result.containers | map(attribute='Names') | flatten | select('search','^blunet\-minecraft\-volume\-interface') }}"
+    msg: "{{ result.containers | map(attribute='Names') | flatten | select('search','^/blunet-minecraft-volume-interface') }}"
   when: result is defined
 
