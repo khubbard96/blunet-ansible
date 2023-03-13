@@ -6,6 +6,6 @@
 
 - name: Print information about containers
   ansible.builtin.debug:
-    var: result
+    var: result.containers
   when: result is defined
 
