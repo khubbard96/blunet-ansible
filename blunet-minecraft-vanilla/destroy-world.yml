@@ -11,7 +11,7 @@
   - name: Run restore script
     community.docker.docker_container_exec:
       container: "{{ container_name }}"
-      command: destroy-location /minecraft/world-backup
+      command: destroy-location /minecraft/world-data
     register: result
 
   - name: Print stdout
