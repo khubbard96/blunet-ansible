@@ -9,7 +9,7 @@
   - name: Run restore script
     community.docker.docker_container_exec:
       container: "{{ container_name }}"
-      command: restore-backup
+      command: restore-backup "{{ s3_backup }}" /minecraft/world-data
     register: result
 
   - name: Print stdout
