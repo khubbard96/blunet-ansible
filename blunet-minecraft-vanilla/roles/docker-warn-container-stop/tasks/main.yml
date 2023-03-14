@@ -1,0 +1,4 @@
+---
+- name: Warn docker container
+  debug:
+    msg: "Warning: docker container must be stopped before executing this action."

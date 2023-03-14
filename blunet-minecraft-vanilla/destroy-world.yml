@@ -2,14 +2,16 @@
   hosts: worker
   remote_user: kevin
   roles:
+    #returns "container_name"
     - role: docker-find-container-by-image
       container_search_param: blunet-minecraft-volume-interface
+    - role: docker-warn-container-stop
 
   tasks:
   - name: Run restore script
     community.docker.docker_container_exec:
       container: "{{ container_name }}"
-      command: destroy-location
+      command: destroy-location /minecraft/world-backup
     register: result
 
   - name: Print stdout
