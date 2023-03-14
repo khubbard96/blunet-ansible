@@ -1,0 +1,4 @@
+---
+dependencies:
+  - role: docker-find-container-by-image
+    container_search_param: blunet-minecraft-vanilla_minecraft_spigot_vanilla

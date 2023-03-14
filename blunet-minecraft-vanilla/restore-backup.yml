@@ -6,12 +6,26 @@
       container_search_param: blunet-minecraft-volume-interface
 
   tasks:
+  - name: Print backup name
+    debug:
+      var: s3_backup
+
   - name: Run restore script
     community.docker.docker_container_exec:
       container: "{{ container_name }}"
       command: restore-backup "{{ s3_backup }}" /minecraft/world-data 2001
     register: result
 
-  - name: Print stdout
+  - name: Print return code
     debug:
-      var: result.stdout
+      var: result.rc
+
+  - name: Remove any existing backups
+    community.docker.docker_container_exec:
+      container: "{{ container_name }}"
+      command: sh -c "rm /mc-backups/*"
+    register: result
+
+  - name: Print return code
+    debug:
+      var: result.rc

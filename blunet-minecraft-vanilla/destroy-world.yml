@@ -8,7 +8,7 @@
     - role: docker-warn-container-stop
 
   tasks:
-  - name: Run restore script
+  - name: Run destroy world data script
     community.docker.docker_container_exec:
       container: "{{ container_name }}"
       command: destroy-location /minecraft/world-data

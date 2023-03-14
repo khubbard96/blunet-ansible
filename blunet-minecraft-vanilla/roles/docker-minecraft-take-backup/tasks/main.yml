@@ -1,0 +1,6 @@
+---
+- name: Run backup script
+  community.docker.docker_container_exec:
+    container: "{{ container_name }}"
+    command: mc_send backup take world-data
+  register: result
