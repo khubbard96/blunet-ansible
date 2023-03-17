@@ -13,7 +13,7 @@
   - name: Restore world
     community.docker.docker_container_exec:
       container: "{{ container_name }}"
-      command: restore-backup "{{ s3_backup }}" /minecraft/world "{{ minecraft_uid }}"
+      command: restore-backup "backups/worlds/world/{{ s3_backup }}" /minecraft/world "{{ minecraft_uid }}"
     register: result
 
   - name: Print return code
@@ -27,7 +27,7 @@
   - name: Restore world_nether
     community.docker.docker_container_exec:
       container: "{{ container_name }}"
-      command: restore-backup "{{ s3_backup }}" /minecraft/world_nether "{{ minecraft_uid }}"
+      command: restore-backup "backups/worlds/world_nether/{{ s3_backup }}" /minecraft/world_nether "{{ minecraft_uid }}"
     register: result
 
   - name: Print return code
@@ -41,13 +41,13 @@
   - name: Restore world_the_end
     community.docker.docker_container_exec:
       container: "{{ container_name }}"
-      command: restore-backup "{{ s3_backup }}" /minecraft/world_the_end "{{ minecraft_uid }}"
+      command: restore-backup "backups/worlds/world_the_end/{{ s3_backup }}" /minecraft/world_the_end "{{ minecraft_uid }}"
     register: result
 
   - name: Print return code
     debug:
       var: result.rc
-      
+
   - name: Exit if error
       meta: end_play
       when: result.rc == 1
