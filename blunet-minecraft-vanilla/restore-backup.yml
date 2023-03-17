@@ -10,20 +10,52 @@
     debug:
       var: s3_backup
 
-  - name: Run restore script
+  - name: Restore world
     community.docker.docker_container_exec:
       container: "{{ container_name }}"
-      command: restore-backup "{{ s3_backup }}" /minecraft/world-data 2001
+      command: restore-backup "{{ s3_backup }}" /minecraft/world "{{ minecraft_uid }}"
     register: result
 
   - name: Print return code
     debug:
       var: result.rc
 
+  - name: Exit if error
+      meta: end_play
+      when: result.rc == 1
+
+  - name: Restore world_nether
+    community.docker.docker_container_exec:
+      container: "{{ container_name }}"
+      command: restore-backup "{{ s3_backup }}" /minecraft/world_nether "{{ minecraft_uid }}"
+    register: result
+
+  - name: Print return code
+    debug:
+      var: result.rc
+
+  - name: Exit if error
+      meta: end_play
+      when: result.rc == 1
+
+  - name: Restore world_the_end
+    community.docker.docker_container_exec:
+      container: "{{ container_name }}"
+      command: restore-backup "{{ s3_backup }}" /minecraft/world_the_end "{{ minecraft_uid }}"
+    register: result
+
+  - name: Print return code
+    debug:
+      var: result.rc
+      
+  - name: Exit if error
+      meta: end_play
+      when: result.rc == 1
+
   - name: Remove any existing backups
     community.docker.docker_container_exec:
       container: "{{ container_name }}"
-      command: sh -c "rm /mc-backups/*"
+      command: sh -c "rm /mc-backups/backups/world/*"
     register: result
 
   - name: Print return code
