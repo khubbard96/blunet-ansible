@@ -4,6 +4,8 @@
   roles:
     - role: docker-find-container-by-image
       container_search_param: blunet-minecraft-vanilla_volume-interface
+  vars:
+    minecraft_uid: 2001
 
   tasks:
   - name: Print backup name
