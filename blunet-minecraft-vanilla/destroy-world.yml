@@ -11,7 +11,27 @@
   - name: Run destroy world data script
     community.docker.docker_container_exec:
       container: "{{ container_name }}"
-      command: destroy-location /minecraft/world-data
+      command: destroy-location /minecraft/world
+    register: result
+
+  - name: Print stdout
+    debug:
+      var: result.stdout
+
+  - name: Run destroy world_nether data script
+    community.docker.docker_container_exec:
+      container: "{{ container_name }}"
+      command: destroy-location /minecraft/world_nether
+    register: result
+
+  - name: Print stdout
+    debug:
+      var: result.stdout
+
+  - name: Run destroy world_the_end data script
+    community.docker.docker_container_exec:
+      container: "{{ container_name }}"
+      command: destroy-location /minecraft/world_the_end
     register: result
 
   - name: Print stdout

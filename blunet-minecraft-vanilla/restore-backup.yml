@@ -57,7 +57,7 @@
   - name: Remove any existing backups
     community.docker.docker_container_exec:
       container: "{{ container_name }}"
-      command: sh -c "rm /mc-backups/backups/world/*"
+      command: sh -c "rm -r /mc-backups/backups"
     register: result
 
   - name: Print return code
