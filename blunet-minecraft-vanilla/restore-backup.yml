@@ -3,7 +3,7 @@
   remote_user: kevin
   roles:
     - role: docker-find-container-by-image
-      container_search_param: blunet-minecraft-volume-interface
+      container_search_param: blunet-minecraft-vanilla_volume-interface
 
   tasks:
   - name: Print backup name
